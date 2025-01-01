@@ -7,8 +7,8 @@ function Pokemon() {
 
 
     async function searchPokemon() {
-        const pokemonInput = document.getElementById("pokemonInput").value;
-        const url = `https://pokeapi.co/api/v2/pokemon/${pokemonInput.toLowerCase()}`;
+   
+        const url = `https://pokeapi.co/api/v2/pokemon/${inputRef.current.value}`;
         
         try {
             const response = await fetch(url);
