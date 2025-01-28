@@ -63,6 +63,27 @@ body{
   justify-content: center;
   align-items: center;
 }
+.pokemon-display input{
+  width: 80%;
+  margin-left: 20%;
+  height: 30px;
+  border-radius: 20px;
+}
+.pokemon-display .search-pokemon{
+  width: 150px;
+  height: 30px;
+  background-color: #c84d4e;
+  font-size: 18px;
+  border-radius: 20px;
+  border: none;
+  color: white;
+  margin-right: 10%;
+  cursor: pointer;
+}
+.pokemon-display .search-pokemon:hover{
+  opacity: 0.7;
+  color: black;
+}
 @media (max-width: 767px){
   .container{
     grid-template-columns: 1fr;

@@ -15,6 +15,9 @@ function Pokemon() {
   const [nextUrl, setNextUrl] = useState("");
   const [prevUrl, setPrevUrl] = useState("");
   const [loading, setLoading] = useState(false);
+  const [pokemonName, setPokemonName] = useState("")
+  const [search, setSearch] = useState(false);
+  const [searchedPokemon, setSearchedPokemon] = useState([]);
 
   useEffect(() => {
     async function getPokemonData() {
@@ -42,15 +45,64 @@ function Pokemon() {
   }
 
   function getPokemonById(id) {
-    setFilteredPokemon(pokemonData.filter((pokemon) => pokemon.id === id));
+    {!search ? setFilteredPokemon(pokemonData.filter((pokemon) => pokemon.id === id)) : 
+      setFilteredPokemon(searchedPokemon.filter((pokemon) => pokemon.id === id))
+     }
+    
+  }
+
+  async function searchPokemon(){
+    if(pokemonName
+      === "") return;
+    try{
+      const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonName}`);
+      const data = await response.json();
+      console.log(data);
+      setSearch(true)
+      setSearchedPokemon([data]);
+      setFilteredPokemon([data]);
+    }
+    catch(err){ 
+      alert("Pokemon not found");
+    }
+  
+  }
+  function handleChange(value){
+    if(value === ""){
+      setSearch(false);
+      setFilteredPokemon([pokemonData[0]]);
+      return;
+    }
+    setPokemonName(value);
+
+  }
+  function searchByEnter(e){
+    if(e.key === "Enter"){
+      searchPokemon();
+    }
   }
 
   return (
     <div className="container">
+   
       {!loading ? (
         <>
+    
           <div className="pokemon-display">
-            {pokemonData.map((pokemon) => (
+          <input placeholder="Search a pokemon e.g Pikachu" onKeyDown={(e) => searchByEnter(e)}  onChange={(e) => handleChange(e.target.value)}  type="text" name="" id="" />
+          <button className="search-pokemon" onClick={searchPokemon}>Search</button>
+            {!search ? pokemonData?.map((pokemon) => (
+              <div
+                key={pokemon.id}
+                onClick={() => getPokemonById(pokemon.id)}
+                className="pokemon"
+              >
+                <p>{pokemon.id}</p>
+                <img src={pokemon.sprites.front_default} alt={pokemon.name} />
+                <p>{pokemon.name}</p>
+              </div>
+            )) : 
+            searchedPokemon.map((pokemon) => (
               <div
                 key={pokemon.id}
                 onClick={() => getPokemonById(pokemon.id)}
@@ -61,20 +113,33 @@ function Pokemon() {
                 <p>{pokemon.name}</p>
               </div>
             ))}
-            <button
+
+            {!search && (
+              <>
+                 <button
               className="prev"
-              onClick={() => setUrl(prevUrl)}
+              onClick={() =>{
+                setUrl(prevUrl);
+                setSearch(false);
+              } }
               disabled={!prevUrl}
             >
               Prev
             </button>
             <button
               className="next"
-              onClick={() => setUrl(nextUrl)}
+              onClick={() =>{
+                setUrl(nextUrl);
+                setSearch(false);
+              } }
               disabled={!nextUrl}
             >
               Next
             </button>
+              </>
+         
+            )}
+           
           </div>
           <div className="filtered-pokemon-container">
             {filteredPokemon.map((pokemon) => (
@@ -115,11 +180,11 @@ function Pokemon() {
                       {stat.stat.name}: {stat.base_stat}
                       <div
                         style={{
-                          width: "200px",
+                          width: "auto",
                           height: "10px",
                           background: "#ddd",
                           position: "relative",
-                          marginLeft: "80px",
+                          marginLeft: "30px",
                         }}
                       >
                         <div
